@@ -1,0 +1,305 @@
+openapi: 3.0.3
+
+info:
+  title: FisioFlow API
+  version: 1.0.0
+  description: API for managing patients and physiotherapy appointments
+
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Patients
+  - name: Appointments
+
+paths:
+
+  /patients:
+
+    post:
+      tags: [Patients]
+      summary: Create patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePatientRequest'
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '400':
+          description: Bad request - invalid data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+
+    get:
+      tags: [Patients]
+      summary: List patients
+      responses:
+        '200':
+          description: OK - patients retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+        '500':
+          description: Internal server error
+
+  /patients/{id}:
+
+    patch:
+      tags: [Patients]
+      summary: Update patient (partial update)
+      description: Allows partial update of patient data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePatientRequest'
+
+      responses:
+        '200':
+          description: Updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '400':
+          description: Bad request - invalid data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Patient not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Patients]
+      summary: Delete patient
+      description: Deletes patient and all related appointments (cascade)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Patient deleted successfully
+        '404':
+          description: Patient not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /appointments:
+
+    post:
+      tags: [Appointments]
+      summary: Create appointment
+      description: |
+        Creates a new appointment.
+        Rule: Appointments cannot overlap on the same day.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAppointmentRequest'
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Bad request - invalid data or schedule conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Patient not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      tags: [Appointments]
+      summary: List appointments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+
+  /appointments/day/{date}:
+
+    get:
+      tags: [Appointments]
+      summary: Get appointments by date
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Invalid date format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+
+  schemas:
+
+    CreatePatientRequest:
+      type: object
+      required:
+        - name
+        - age
+      properties:
+        name:
+          type: string
+          example: Maria Souza
+
+        phone:
+          type: string
+          example: "(85) 99999-0000"
+          pattern: ^\(\d{2}\)\s\d{5}-\d{4}$
+
+        age:
+          type: integer
+          minimum: 1
+          maximum: 120
+          example: 35
+
+        diagnosis:
+          type: string
+          example: Lower back pain
+
+    UpdatePatientRequest:
+      type: object
+      properties:
+        name:
+          type: string
+
+        phone:
+          type: string
+          pattern: ^\(\d{2}\)\s\d{5}-\d{4}$
+
+        age:
+          type: integer
+          minimum: 1
+          maximum: 120
+
+        diagnosis:
+          type: string
+
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        age:
+          type: integer
+        diagnosis:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateAppointmentRequest:
+      type: object
+      required:
+        - patientId
+        - date
+        - startTime
+        - duration
+      properties:
+        patientId:
+          type: integer
+
+        date:
+          type: string
+          format: date
+
+        startTime:
+          type: string
+          pattern: ^\d{2}:\d{2}$
+
+        duration:
+          type: integer
+          minimum: 1
+
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientId:
+          type: integer
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+        duration:
+          type: integer
+        endTime:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string

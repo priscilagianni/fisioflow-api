@@ -1,0 +1,267 @@
+{
+  "info": {
+    "name": "FisioFlow API",
+    "_postman_id": "1cf2ec84-c0a8-4e05-925a-8d88c2d889bd",
+    "description": "Collection for validating the FisioFlow API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+
+    {
+      "name": "Create Patient",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Maria Souza\",\n  \"phone\": \"(85) 99999-0000\",\n  \"age\": 35,\n  \"diagnosis\": \"Lower back pain\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response has patient id', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.id).to.exist;",
+              "  pm.collectionVariables.set('patientId', json.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "List Patients",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/patients",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is array', function () {",
+              "  pm.expect(pm.response.json()).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Update Patient",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Maria Updated\",\n  \"age\": 40\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/{{patientId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "{{patientId}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Patient updated correctly', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.name).to.eql('Maria Updated');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Create Appointment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": {{patientId}},\n  \"date\": \"2026-04-22\",\n  \"startTime\": \"10:00\",\n  \"duration\": 60\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/appointments",
+          "host": ["{{baseUrl}}"],
+          "path": ["appointments"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Appointment created', function () {",
+              "  pm.expect(pm.response.json().id).to.exist;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Create Appointment Conflict",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": {{patientId}},\n  \"date\": \"2026-04-22\",\n  \"startTime\": \"10:30\",\n  \"duration\": 60\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/appointments",
+          "host": ["{{baseUrl}}"],
+          "path": ["appointments"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 400', function () {",
+              "  pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test('Should return conflict message', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.message).to.include('Conflito');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "List Appointments",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/appointments",
+          "host": ["{{baseUrl}}"],
+          "path": ["appointments"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Delete Patient",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{baseUrl}}/patients/{{patientId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "{{patientId}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Patient deleted successfully', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.message).to.include('deleted');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Delete Patient Invalid",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{baseUrl}}/patients/999",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "999"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 404', function () {",
+              "  pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+
+  ],
+
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
