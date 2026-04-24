@@ -1,6 +1,31 @@
 # FisioFlow API
 
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.21-blue)](https://expressjs.com/)
+[![Cypress](https://img.shields.io/badge/Cypress-14-brightgreen)](https://www.cypress.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](#license)
+
 API REST simples para gerenciamento de pacientes e agendamento de atendimentos de fisioterapia.
+
+⚠️ **Projeto educacional** — dados armazenados em memória (não persistem após reiniciar o servidor).
+
+---
+
+##  Índice
+
+* [Objetivo](#objetivo)
+* [Requisitos](#requisitos)
+* [Instalação](#instalação)
+* [Como usar](#como-usar)
+* [Estrutura do projeto](#estrutura-do-projeto)
+* [Arquitetura](#arquitetura)
+* [API Endpoints](#api-endpoints)
+* [Regras de negócio](#regras-de-negócio)
+* [Testes](#testes)
+* [Troubleshooting](#troubleshooting)
+* [Melhorias futuras](#melhorias-futuras)
+* [Autor](#autor)
+* [Licença](#licença)
 
 ---
 
@@ -8,165 +33,249 @@ API REST simples para gerenciamento de pacientes e agendamento de atendimentos d
 
 Este projeto demonstra:
 
-- Desenvolvimento backend com Node.js e Express
-- Separação de responsabilidades por camadas (Controller, Service, Routes)
-- Regras de negócio para prevenção de conflito de horários
-- QA manual e automatizado com Postman e Cypress
-- Documentação de API com Swagger (OpenAPI)
-
----
-
-## Estrutura do projeto
-
-```text
-src/
-controllers/
-database/
-routes/
-services/
-utils/
-
+* Desenvolvimento backend com Node.js e Express
+* Organização em camadas (Routes, Controllers, Services)
+* Implementação de regras de negócio
+* Testes manuais e automatizados com Cypress
+* Documentação de API com Swagger (OpenAPI)
 
 ---
 
 ## Requisitos
 
-- Node.js 18+
-- npm
+* Node.js 18+
+* npm 9+
 
 ---
 
 ## Instalação
 
 ```bash
+# Clonar repositório
+git clone <repo-url>
+cd fisioFlow
+
+# Instalar dependências
 npm install
 
-Execução
+# Iniciar servidor
 npm start
+```
 
-Servidor:
+Servidor disponível em:
 
-http://localhost:3000
+* [http://localhost:3000](http://localhost:3000)
+* Swagger: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
-Swagger:
+---
 
-http://localhost:3000/api-docs
+## Como usar
 
+```bash
+npm start
+```
 
-Endpoints
-Pacientes
-Criar paciente
+Rodando em modo desenvolvimento.
 
-POST /patients
+---
 
+## Estrutura do projeto
+
+```
+FisioFlow/
+├── src/
+│   ├── app.js
+│   ├── server.js
+│   ├── controllers/
+│   ├── services/
+│   ├── routes/
+│   ├── database/
+│   └── utils/
+│
+├── docs/
+│   ├── swagger.yaml
+│   ├── QA_TEST_PLAN.md
+│   ├── user-stories.md
+│   └── data-model.md
+│
+├── cypress/
+│   ├── e2e/
+│   │   └── fisioflow.cy.js
+│   ├── reports/
+│   │   ├── assets/
+│   │   ├── mochawesome.html
+│   │   └── mochawesome.json
+│   └── screenshots/
+│
+├── postman/
+│   └── FisioFlow.postman_collection.json
+│
+├── .env.example
+├── .gitignore
+├── cypress.config.js
+├── package.json
+└── package-lock.json
+```
+
+---
+
+## Arquitetura
+
+O projeto segue uma arquitetura em camadas:
+
+* **Routes** → Define endpoints
+* **Controllers** → Recebe requisição HTTP
+* **Services** → Regras de negócio
+* **Database (memory)** → Armazena dados temporariamente
+
+Fluxo:
+
+```
+Request → Route → Controller → Service → Response
+```
+
+---
+
+## API Endpoints
+
+### Patients
+
+#### Criar paciente
+
+`POST /patients`
+
+```json
 {
   "name": "Maria Souza",
   "phone": "(85) 99999-0000",
-  "diagnosis": "Postural lower back pain"
+  "age": 35,
+  "diagnosis": "Lower back pain"
 }
+```
 
-Regras:
+---
 
-name obrigatório
-não pode ser vazio
-não pode conter números ou caracteres especiais
-phone opcional
-phone deve seguir formato (XX) XXXXX-XXXX
-Listar pacientes
+#### Listar pacientes
 
-GET /patients
+`GET /patients`
 
-Retorna todos os pacientes cadastrados.
+---
 
-Deletar paciente
+#### Atualizar paciente
 
-DELETE /patients/{id}
+`PATCH /patients/{id}`
 
-Respostas:
+---
 
-200 → paciente removido com sucesso
-404 → paciente não encontrado
-Atendimentos
-Criar atendimento
+#### Deletar paciente
 
-POST /appointments
+`DELETE /patients/{id}`
 
+---
+
+### Appointments
+
+#### Criar agendamento
+
+`POST /appointments`
+
+```json
 {
   "patientId": 1,
-  "date": "2026-04-22",
+  "date": "2026-04-24",
   "startTime": "10:00",
   "duration": 60
 }
+```
 
-Regras:
+---
 
-patientId deve existir
-date no formato YYYY-MM-DD
-startTime no formato HH:MM
-duration deve ser maior que zero
+#### Listar agendamentos
 
-Resposta inclui:
+`GET /appointments`
 
-endTime calculado automaticamente
-createdAt gerado automaticamente
-Listar atendimentos
+---
 
-GET /appointments
+#### Por dia
 
-Listar atendimentos por dia
+`GET /appointments/day/:date`
 
-GET /appointments/day/:date
+---
 
-Regra crítica do sistema
+## Regras de negócio
 
-Não pode existir sobreposição de horários no mesmo dia.
+### Conflito de horário
 
-Fórmula de conflito:
+Não é permitido agendar dois atendimentos no mesmo intervalo de tempo.
+
+Regra:
+
+```
 newStart < existingEnd AND newEnd > existingStart
+```
 
 Se houver conflito:
 
+```json
 {
-  "message": "Conflito de horario detectado"
+  "message": "Conflito de horário detectado"
 }
-Cenários de teste
-Pacientes
-CT01: Criar paciente com sucesso
-CT02: Listar pacientes
-CT03: Criar paciente sem nome (erro)
-CT12: Remover paciente existente
-CT13: Remover paciente inexistente
-Atendimentos
-CT04: Criar atendimento válido
-CT05: Conflito de horário (erro)
-CT06: Atendimento válido em horário livre
-CT07: Dados faltando (erro)
-CT08: Duração zero (erro)
-CT09: Paciente inexistente (erro)
-CT10: Listar atendimentos
-CT11: Listar atendimentos do dia
+```
 
-Documentação
-User Stories: docs/user-stories.md
-Plano de testes: docs/QA_TEST_PLAN.md
-Modelo de dados: docs/data-model.md
-Postman
+---
 
-Coleção:
+## Testes
 
-postman/FisioFlow.postman_collection.json
-Cypress
+### Cobertura
 
-Abrir interface:
+* Criar/listar/editar/deletar pacientes
+* Validação de campos
+* Criar agendamentos
+* Conflito de horários
+* Listagem por data
 
-npm run cy:open
+### Executar testes
 
-Executar testes:
-
+```bash
 npm run cy:run
+npm run cy:open
+```
 
+---
 
-Melhorias futuras
-Atualização de pacientes (PATCH/PUT)
-Remoção de atendimentos
-Regra de integridade entre paciente e atendimentos
+## Troubleshooting
+
+### Porta em uso
+
+```bash
+lsof -i :3000
+kill -9 <PID>
+```
+
+### Cypress não conecta
+
+* Verificar servidor rodando
+* Conferir baseURL
+
+---
+
+## Melhorias futuras
+
+* Banco de dados (PostgreSQL ou MongoDB)
+* Autenticação JWT
+* Implementação de middlewares completos
+* Docker
+* CI/CD com GitHub Actions
+* Testes de contrato
+
+---
+
+## Autor
+
+Priscila Gianni
+
+---
+
+## 📄 Licença
+
+MIT

@@ -1,8 +1,8 @@
-# 📘 User Stories - FisioFlow
+# User Stories - FisioFlow
 
 ---
 
-## 🎯 Objetivo do sistema
+## Objetivo do sistema
 
 Permitir:
 
@@ -15,7 +15,7 @@ Permitir:
 
 ---
 
-# 👥 User Stories
+# User Stories
 
 ---
 
@@ -23,7 +23,7 @@ Permitir:
 
 Como fisioterapeuta, eu quero cadastrar pacientes para organizar meus atendimentos.
 
-### 📌 Critérios de aceitação:
+### Critérios de aceitação:
 
 - deve criar paciente com `id` gerado automaticamente  
 - `name` é obrigatório  
@@ -34,7 +34,7 @@ Como fisioterapeuta, eu quero cadastrar pacientes para organizar meus atendiment
 - deve retornar status `201` em caso de sucesso  
 - deve retornar status `400` em caso de dados inválidos  
 
-### 🔗 Relacionamento:
+### Relacionamento:
 
 - Endpoint: `POST /patients`  
 - Testes: CT01, CT03, CT04, CT05  
@@ -45,13 +45,13 @@ Como fisioterapeuta, eu quero cadastrar pacientes para organizar meus atendiment
 
 Como fisioterapeuta, eu quero visualizar a lista de pacientes.
 
-### 📌 Critérios de aceitação:
+### Critérios de aceitação:
 
 - deve retornar todos os pacientes cadastrados  
 - deve retornar um array (mesmo vazio)  
 - deve retornar status `200`  
 
-### 🔗 Relacionamento:
+### Relacionamento:
 
 - Endpoint: `GET /patients`  
 - Testes: CT02  
@@ -62,7 +62,7 @@ Como fisioterapeuta, eu quero visualizar a lista de pacientes.
 
 Como fisioterapeuta, eu quero atualizar dados de um paciente para manter suas informações corretas.
 
-### 📌 Critérios de aceitação:
+### Critérios de aceitação:
 
 - deve permitir atualização parcial dos dados  
 - paciente deve existir no sistema  
@@ -74,7 +74,7 @@ Como fisioterapeuta, eu quero atualizar dados de um paciente para manter suas in
 - deve retornar status `200` em caso de sucesso  
 - deve retornar status `404` se paciente não existir  
 
-### 🔗 Relacionamento:
+### Relacionamento:
 
 - Endpoint: `PATCH /patients/{id}`  
 - Testes: CT06, CT15  
@@ -85,7 +85,7 @@ Como fisioterapeuta, eu quero atualizar dados de um paciente para manter suas in
 
 Como fisioterapeuta, eu quero remover um paciente para manter o sistema atualizado.
 
-### 📌 Critérios de aceitação:
+### Critérios de aceitação:
 
 - deve remover o paciente pelo `id`  
 - deve retornar status `200` quando removido com sucesso  
@@ -93,7 +93,7 @@ Como fisioterapeuta, eu quero remover um paciente para manter o sistema atualiza
 - ao remover um paciente, todos os seus atendimentos devem ser removidos automaticamente (exclusão em cascata)  
 - não pode existir atendimento sem paciente válido  
 
-### 🔗 Relacionamento:
+### Relacionamento:
 
 - Endpoint: `DELETE /patients/{id}`  
 - Testes: CT07, CT08  
@@ -104,7 +104,7 @@ Como fisioterapeuta, eu quero remover um paciente para manter o sistema atualiza
 
 Como fisioterapeuta, eu quero agendar sessões com data, horário e duração.
 
-### 📌 Critérios de aceitação:
+### Critérios de aceitação:
 
 - `patientId`, `date`, `startTime` e `duration` são obrigatórios  
 - `patientId` deve existir no sistema  
@@ -115,7 +115,7 @@ Como fisioterapeuta, eu quero agendar sessões com data, horário e duração.
 - deve retornar status `201` em caso de sucesso  
 - deve retornar status `400` em caso de dados inválidos  
 
-### 🔗 Relacionamento:
+### Relacionamento:
 
 - Endpoint: `POST /appointments`  
 - Testes: CT09, CT10  
@@ -126,7 +126,7 @@ Como fisioterapeuta, eu quero agendar sessões com data, horário e duração.
 
 Como fisioterapeuta, eu quero evitar agendar dois atendimentos no mesmo horário.
 
-### 📌 Critérios de aceitação:
+### Critérios de aceitação:
 
 - não permitir sobreposição de atendimentos no mesmo dia  
 - conflito ocorre quando:  
@@ -134,7 +134,7 @@ Como fisioterapeuta, eu quero evitar agendar dois atendimentos no mesmo horário
 - deve retornar status `400` em caso de conflito  
 - deve retornar mensagem: `Conflito de horario detectado`  
 
-### 🔗 Relacionamento:
+### Relacionamento:
 
 - Endpoint: `POST /appointments`  
 - Testes: CT12  
@@ -145,26 +145,26 @@ Como fisioterapeuta, eu quero evitar agendar dois atendimentos no mesmo horário
 
 Como fisioterapeuta, eu quero visualizar todos os atendimentos do dia.
 
-### 📌 Critérios de aceitação:
+### Critérios de aceitação:
 
 - deve retornar apenas atendimentos da data informada  
 - deve retornar um array (mesmo vazio)  
 - deve aceitar data no formato `YYYY-MM-DD`  
 - deve retornar status `200`  
 
-### 🔗 Relacionamento:
+### Relacionamento:
 
 - Endpoint: `GET /appointments/day/{date}`  
 - Testes: CT13, CT14  
 
 ---
 
-# 📌 Regras de negócio globais
+# Regras de negócio globais
 
 - nome do paciente é obrigatório  
 - nome não pode conter números ou caracteres especiais  
 - idade deve ser número entre 1 e 120  
-- telefone, quando informado, deve seguir o formato `(XX) XXXXX-XXXX`  
+- telefone, é opcional e quando informado, deve seguir o formato `(XX) XXXXX-XXXX`  
 - atualização de paciente pode ser parcial (PATCH)  
 - não pode existir sobreposição de horários no mesmo dia  
 - ao deletar um paciente, todos os seus atendimentos devem ser removidos automaticamente  

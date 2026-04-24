@@ -28,9 +28,7 @@ describe('FisioFlow API - Full Test Suite', () => {
     });
   });
 
-  // =========================
   // US01 - CREATE PATIENT
-  // =========================
 
   it('US01 - should create patient successfully', () => {
     cy.request('POST', '/patients', {
