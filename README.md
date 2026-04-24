@@ -7,7 +7,7 @@
 
 API REST simples para gerenciamento de pacientes e agendamento de atendimentos de fisioterapia.
 
-⚠️ **Projeto educacional** — dados armazenados em memória (não persistem após reiniciar o servidor).
+**Projeto educacional** — dados armazenados em memória (não persistem após reiniciar o servidor).
 
 ---
 
@@ -52,7 +52,7 @@ Este projeto demonstra:
 
 ```bash
 # Clonar repositório
-git clone <repo-url>
+git clone <git clone https://github.com/priscilagianni/fisioflow-api.git>
 cd fisioFlow
 
 # Instalar dependências
@@ -218,7 +218,7 @@ Se houver conflito:
 
 ```json
 {
-  "message": "Conflito de horário detectado"
+  "message": "Schedule conflict detected"
 }
 ```
 
@@ -276,6 +276,6 @@ Priscila Gianni
 
 ---
 
-## 📄 Licença
+## Licença
 
 MIT
