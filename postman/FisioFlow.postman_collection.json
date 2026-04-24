@@ -165,8 +165,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Status code is 400', function () {",
-              "  pm.response.to.have.status(400);",
+              "pm.test('Status code is 409', function () {",
+              "  pm.response.to.have.status(409);",
               "});",
               "",
               "pm.test('Should return conflict message', function () {",

@@ -131,7 +131,7 @@ Como fisioterapeuta, eu quero evitar agendar dois atendimentos no mesmo horário
 - não permitir sobreposição de atendimentos no mesmo dia  
 - conflito ocorre quando:  
   `newStart < existingEnd AND newEnd > existingStart`  
-- deve retornar status `400` em caso de conflito  
+- deve retornar status `409` (Conflict) em caso de conflito  
 - deve retornar mensagem: `Conflito de horario detectado`  
 
 ### Relacionamento:

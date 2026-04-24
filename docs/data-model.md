@@ -1,10 +1,10 @@
-# 📊 Data Model - FisioFlow
+# Data Model - FisioFlow
 
 ---
 
-## 👤 Patient
+## Patient
 
-### 📌 Campos
+### Campos
 
 - **id**: identificador numérico gerado automaticamente  
 - **name**: nome do paciente  
@@ -15,7 +15,7 @@
 
 ---
 
-### 📋 Regras de validação
+### Regras de validação
 
 - `name` é obrigatório  
 - `name` não pode conter números ou caracteres especiais  
@@ -24,7 +24,7 @@
 
 ---
 
-### 🔁 Regras de comportamento
+### Regras de comportamento
 
 - Pacientes podem ser removidos via `DELETE /patients/{id}`  
 - Ao remover um paciente, todos os seus atendimentos são removidos automaticamente (exclusão em cascata)  
@@ -33,7 +33,7 @@
 
 ---
 
-### 📡 Status Codes (Patient)
+### Status Codes (Patient)
 
 - **201** → criado com sucesso  
 - **200** → operação realizada com sucesso  
@@ -42,9 +42,9 @@
 
 ---
 
-## 📅 Appointment
+## Appointment
 
-### 📌 Campos
+### Campos
 
 - **id**: identificador numérico gerado automaticamente  
 - **patientId**: referência ao paciente  
@@ -56,7 +56,7 @@
 
 ---
 
-### 📋 Regras de validação
+### Regras de validação
 
 - `patientId` deve existir no sistema  
 - `date`, `startTime` e `duration` são obrigatórios  
@@ -66,7 +66,7 @@
 
 ---
 
-### 🔁 Regras de comportamento
+### Regras de comportamento
 
 - O `endTime` é calculado automaticamente (`startTime + duration`)  
 - Atendimentos são removidos automaticamente quando o paciente é deletado  
@@ -74,7 +74,7 @@
 
 ---
 
-### ⚠️ Regra de conflito de horário
+### Regra de conflito de horário
 
 Um novo agendamento entra em conflito quando:
 
@@ -84,3 +84,14 @@ Um novo agendamento entra em conflito quando:
 
 ```text
 newStart < existingEnd AND newEnd > existingStart
+```
+
+---
+
+### 📡 Status Codes (Appointment)
+
+- **201** → criado com sucesso  
+- **200** → operação realizada com sucesso  
+- **400** → erro de validação (dados inválidos)  
+- **409** → conflito de horário detectado  
+- **404** → paciente não encontrado

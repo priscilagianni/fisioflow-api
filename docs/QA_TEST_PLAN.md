@@ -1,4 +1,4 @@
-# 🧪 QA Test Plan - FisioFlow
+# QA Test Plan - FisioFlow
 
 Versão: v1.1  
 Ambiente: API local em desenvolvimento  
@@ -6,7 +6,7 @@ Tipo: Testes funcionais e validação de regras de negócio
 
 ---
 
-## 🎯 Escopo
+## Escopo
 
 Validação funcional da API de pacientes e atendimentos:
 
@@ -22,7 +22,7 @@ Validação funcional da API de pacientes e atendimentos:
 
 ---
 
-## 🖥️ Ambiente
+## Ambiente
 
 - API local em execução  
 - Base de dados em memória (arrays)  
@@ -33,11 +33,11 @@ Validação funcional da API de pacientes e atendimentos:
 
 ---
 
-# 📋 Casos de Teste
+# Casos de Teste
 
 ---
 
-# 👤 Pacientes
+# Pacientes
 
 ---
 
@@ -116,7 +116,7 @@ Severidade: Médio | Tipo: Validação negativa
 
 ---
 
-# 📅 Atendimentos
+# Atendimentos
 
 ---
 
@@ -152,8 +152,9 @@ Severidade: Crítico | Tipo: Integração
 Severidade: Crítico | Tipo: Regra de negócio  
 
 **Resultado esperado:**
-- Status 400  
+- Status 409 (Conflict)  
 - Mensagem de conflito de horário  
+- Atendimento não é criado  
 
 ---
 
@@ -175,7 +176,7 @@ Severidade: Baixa | Tipo: Funcional
 
 ---
 
-# 📌 Regras de Qualidade
+# Regras de Qualidade
 
 - API utiliza armazenamento em memória (dados são perdidos ao reiniciar)  
 - Conflito de horário é regra crítica de negócio  
@@ -185,7 +186,7 @@ Severidade: Baixa | Tipo: Funcional
 
 ---
 
-# 📊 Cobertura do Test Plan
+# Cobertura do Test Plan
 
 ✔ CRUD completo de pacientes  
 ✔ CRUD completo de atendimentos  

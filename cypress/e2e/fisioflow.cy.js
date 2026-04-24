@@ -236,7 +236,7 @@ describe('FisioFlow API - Full Test Suite', () => {
           duration: 60
         }
       }).then((res) => {
-        expect(res.status).to.eq(400);
+        expect(res.status).to.eq(409);
       });
 
     });

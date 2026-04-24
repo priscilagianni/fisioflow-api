@@ -54,7 +54,7 @@ function createAppointment(data) {
   if (hasConflict) {
     return {
       error: {
-        status: 400,
+        status: 409,
         message: 'Schedule conflict detected'
       }
     };

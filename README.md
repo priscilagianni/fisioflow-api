@@ -214,11 +214,11 @@ Regra:
 newStart < existingEnd AND newEnd > existingStart
 ```
 
-Se houver conflito:
+Se houver conflito (Status `409 Conflict`):
 
 ```json
 {
-  "message": "Schedule conflict detected"
+  "message": "Conflito de horario detectado"
 }
 ```
 

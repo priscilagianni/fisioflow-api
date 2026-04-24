@@ -27,17 +27,17 @@ paths:
               $ref: '#/components/schemas/CreatePatientRequest'
       responses:
         '201':
-          description: Created successfully
+          description: Patient created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Patient'
         '400':
-          description: Bad request - invalid data
+          description: Invalid patient data
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "Invalid patient data"
         '500':
           description: Internal server error
 
@@ -46,7 +46,7 @@ paths:
       summary: List patients
       responses:
         '200':
-          description: OK - patients retrieved successfully
+          description: Patients retrieved successfully
           content:
             application/json:
               schema:
@@ -55,75 +55,79 @@ paths:
                   $ref: '#/components/schemas/Patient'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              example:
+                message: "Error retrieving patients"
 
   /patients/{id}:
 
     patch:
       tags: [Patients]
       summary: Update patient (partial update)
-      description: Allows partial update of patient data
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
-
+            example: 1
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdatePatientRequest'
-
       responses:
         '200':
-          description: Updated successfully
+          description: Patient updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Patient'
         '400':
-          description: Bad request - invalid data
+          description: Invalid patient data
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "Invalid patient data"
         '404':
           description: Patient not found
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "Patient not found"
 
     delete:
       tags: [Patients]
       summary: Delete patient
-      description: Deletes patient and all related appointments (cascade)
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
+            example: 1
       responses:
         '200':
           description: Patient deleted successfully
+          content:
+            application/json:
+              example:
+                message: "Patient deleted successfully"
         '404':
           description: Patient not found
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "Patient not found"
 
   /appointments:
 
     post:
       tags: [Appointments]
       summary: Create appointment
-      description: |
-        Creates a new appointment.
-        Rule: Appointments cannot overlap on the same day.
+      description: Appointments cannot overlap on the same day.
       requestBody:
         required: true
         content:
@@ -132,30 +136,39 @@ paths:
               $ref: '#/components/schemas/CreateAppointmentRequest'
       responses:
         '201':
-          description: Created successfully
+          description: Appointment created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Appointment'
+
         '400':
-          description: Bad request - invalid data or schedule conflict
+          description: Invalid appointment data
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "Invalid appointment data"
+
         '404':
           description: Patient not found
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "Patient not found"
+
+        '409':
+          description: Schedule conflict detected
+          content:
+            application/json:
+              example:
+                message: "Schedule conflict detected"
 
     get:
       tags: [Appointments]
       summary: List appointments
       responses:
         '200':
-          description: OK
+          description: Appointments retrieved successfully
           content:
             application/json:
               schema:
@@ -175,9 +188,10 @@ paths:
           schema:
             type: string
             format: date
+            example: "2026-04-24"
       responses:
         '200':
-          description: OK
+          description: Appointments retrieved successfully
           content:
             application/json:
               schema:
@@ -188,8 +202,8 @@ paths:
           description: Invalid date format
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "Invalid date format"
 
 components:
 
@@ -197,25 +211,19 @@ components:
 
     CreatePatientRequest:
       type: object
-      required:
-        - name
-        - age
+      required: [name, age]
       properties:
         name:
           type: string
           example: Maria Souza
-
         phone:
           type: string
           example: "(85) 99999-0000"
-          pattern: ^\(\d{2}\)\s\d{5}-\d{4}$
-
         age:
           type: integer
           minimum: 1
           maximum: 120
           example: 35
-
         diagnosis:
           type: string
           example: Lower back pain
@@ -225,16 +233,12 @@ components:
       properties:
         name:
           type: string
-
         phone:
           type: string
-          pattern: ^\(\d{2}\)\s\d{5}-\d{4}$
-
         age:
           type: integer
           minimum: 1
           maximum: 120
-
         diagnosis:
           type: string
 
@@ -243,60 +247,70 @@ components:
       properties:
         id:
           type: integer
+          example: 1
         name:
           type: string
+          example: Maria Souza
         phone:
           type: string
+          example: "(85) 99999-0000"
         age:
           type: integer
+          example: 35
         diagnosis:
           type: string
+          example: Lower back pain
         createdAt:
           type: string
           format: date-time
+          example: "2026-04-24T14:00:00.000Z"
 
     CreateAppointmentRequest:
       type: object
-      required:
-        - patientId
-        - date
-        - startTime
-        - duration
+      required: [patientId, date, startTime, duration]
       properties:
         patientId:
           type: integer
-
+          example: 1
         date:
           type: string
           format: date
-
+          example: "2026-04-24"
         startTime:
           type: string
           pattern: ^\d{2}:\d{2}$
-
+          example: "10:00"
         duration:
           type: integer
           minimum: 1
+          example: 60
 
     Appointment:
       type: object
       properties:
         id:
           type: integer
+          example: 1
         patientId:
           type: integer
+          example: 1
         date:
           type: string
           format: date
+          example: "2026-04-24"
         startTime:
           type: string
+          example: "10:00"
         duration:
           type: integer
+          example: 60
         endTime:
           type: string
+          example: "11:00"
         createdAt:
           type: string
           format: date-time
+          example: "2026-04-24T14:00:00.000Z"
 
     ErrorResponse:
       type: object
